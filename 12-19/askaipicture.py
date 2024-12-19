@@ -11,7 +11,7 @@ from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv()
-print(os.getenv('GEMINIAPIKEY'))
+
 generativeai.configure(api_key=os.getenv('GEMINIAPIKEY')) # 請替換成您的 API 金鑰
 
 model = generativeai.GenerativeModel('gemini-2.0-flash-exp') # 注意：需要使用支援 vision 的模型
