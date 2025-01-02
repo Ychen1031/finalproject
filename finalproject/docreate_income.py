@@ -15,31 +15,22 @@ def handle_income_postback(event, app):
         line_bot_api = MessagingApi(api_client)
         postback_data = json.loads(event.postback.data)
         print(type(postback_data))
-        if '方式' in postback_data:
-            if postback_data['方式'] == 'salary':
-                line_bot_api.reply_message_with_http_info(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text='薪資為' + str(postback_data['price']) + '元' + '\n' + '細項: ' + postback_data['詳情'])]
-                    )
-                )
-            elif postback_data['方式'] == 'bonus':
-                line_bot_api.reply_message_with_http_info(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text='獎金為' + str(postback_data['price']) + '元' + '\n' + '細項: ' + postback_data['詳情'])]
-                    )
-                )
-            elif postback_data['方式'] == 'invest':
-                line_bot_api.reply_message_with_http_info(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text='投資為' + str(postback_data['price']) + '元' + '\n' + '細項: ' + postback_data['詳情'])]
-                    )
-                )
-            data = [
-                [str(datetime.date.today()), postback_data['方式'], postback_data['price'], postback_data['詳情']]
-            ]
-            pish_data(data)
-        else:
-            app.logger.error("KeyError: '方式' not found in postback_data")
+        
+        income_type = postback_data.get('方式')
+        if income_type:
+            handle_income_type(income_type, postback_data, event.reply_token, line_bot_api)
+
+def handle_income_type(income_type, postback_data, reply_token, line_bot_api):
+    if income_type == 'salary':
+        reply_message = create_salary_message(postback_data)
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=reply_token,
+                messages=[reply_message]
+            )
+        )
+
+def create_salary_message(postback_data):
+    price = postback_data.get('price', '未知')
+    details = postback_data.get('詳情', '無')
+    return TextMessage(text=f'薪資為 {price} 元\n細項: {details}')
