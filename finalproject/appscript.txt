@@ -1,0 +1,61 @@
+function doPost(e) {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // 解析 POST 請求中的資料
+  var params = JSON.parse(e.postData.contents);
+  var sheetName = params.sheetName; // 假設 POST 中傳遞了 sheetName
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  
+  if (!sheet) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "找不到名為 '" + sheetName + "' 的工作表！"
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  // 獲取數據
+  var data = sheet.getDataRange().getValues();
+  var header = data.shift();
+  
+  // 彙總數據
+  var summary = {};
+  data.forEach(function(row) {
+    var method = row[1];
+    var price = parseFloat(row[2]);
+    if (!isNaN(price)) {
+      summary[method] = (summary[method] || 0) + price;
+    }
+  });
+
+  // 構建圖表數據
+  var chartData = [["方式", "Price"]];
+  for (var method in summary) {
+    chartData.push([method, summary[method]]);
+  }
+
+  // 插入數據到工作表（臨時用於圖表生成）
+  var chartRange = sheet.getRange(1, 6, chartData.length, 2);
+  chartRange.setValues(chartData);
+
+  // 創建圖表
+  var chart = sheet.newChart()
+    .setChartType(Charts.ChartType.PIE)
+    .addRange(chartRange)
+    .setPosition(1, 8, 0, 0)
+    .setOption("title", "今日彙總")
+    .build();
+
+  sheet.insertChart(chart);
+
+  // 將圖表轉換為圖像
+  var blob = chart.getAs("image/png");
+  var base64Image = Utilities.base64Encode(blob.getBytes());
+  var dataUri = "data:image/png;base64," + base64Image;
+
+  // 返回 Base64 圖像
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    message: "圖表已成功生成！",
+    imageBase64: dataUri
+  })).setMimeType(ContentService.MimeType.JSON);
+}
