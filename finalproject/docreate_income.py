@@ -23,7 +23,7 @@ def handle_income_postback(event, app):
 
         if '方式' in postback_data:
             income_type = postback_data['方式']
-            price = str(postback_data['price'])
+            price = str(postback_data['價錢'])
             details = postback_data['詳情']
             
             # 根據收入類型處理回覆訊息
