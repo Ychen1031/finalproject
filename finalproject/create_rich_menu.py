@@ -34,6 +34,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"支出"}',
                         "text": "請輸入支出詳情ex:100 炒飯"
                     }
                 },
@@ -45,6 +47,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"收入"}',
                         "text": "請輸入收入詳情ex:100 台積電"
                     }
                 },
@@ -56,6 +60,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"分析"}',
                         "text": "開始分析"
                     }
                 },
@@ -67,6 +73,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"本日彙總"}',
                         "text": "產生本日彙總"
                     }
                 },
@@ -78,6 +86,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"本月彙總"}',
                         "text": "產生本月彙總"
                     }
                 },
@@ -89,6 +99,8 @@ def create_rich_menu():
                         "height": 843
                     },
                     "action": {
+                        "type": "postback",
+                        "data": '{"action" :"回饋"}',
                         "text": "產生回饋與建議中"
                     }
                 }
@@ -101,7 +113,7 @@ def create_rich_menu():
         rich_menu_id = response["richMenuId"]
         
         # Upload rich menu image
-        with open('richmenu-1.png', 'rb') as image:
+        with open('static/richmenu-2.png', 'rb') as image:
             line_bot_blob_api.set_rich_menu_image(
                 rich_menu_id=rich_menu_id,
                 body=bytearray(image.read()),
