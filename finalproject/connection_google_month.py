@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 load_dotenv()
 
 url = os.getenv('GOOGLEMONTH')  # 替換為部署後的 URL
@@ -32,4 +33,5 @@ def get_chart(yearMonth):
         print("回應內容:", response.text)
     return '本月彙總'
 # 測試範例
-# get_chart("2024-11")
+current_year_month = datetime.now().strftime("%Y-%m")
+get_chart(current_year_month)
