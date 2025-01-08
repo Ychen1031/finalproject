@@ -53,4 +53,4 @@ def create_income_message(income_type, price, details):
     }
 
     # 預設返回未知類型訊息
-    return TextMessage(text=income_messages.get(income_type, f'未知收入類型: {income_type}'))
+    return TextMessage(text=income_messages.get(income_type, f'收入類型: {income_type}'))

@@ -20,7 +20,7 @@ def get_ngrok_public_url(工作表):
                 # 解碼 Base64 圖片
                 image_data = result["imageBase64"].split(",")[1]  # 去除 Data URI 前綴
                 img = Image.open(BytesIO(base64.b64decode(image_data)))
-                img.save("chart.png")  # 保存圖片
+                img.save("static/chart.png")  # 保存圖片
             else:
                 print("錯誤：'imageBase64' 鍵不存在")
         else:

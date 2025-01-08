@@ -1,0 +1,87 @@
+function doPost(e) {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 記錄收到的完整POST資料，方便除錯
+  Logger.log("收到的POST資料: " + JSON.stringify(e.postData));
+
+  try {
+    var params = JSON.parse(e.postData.contents);
+    Logger.log("解析後的參數: " + JSON.stringify(params));
+  } catch (error) {
+    Logger.log("JSON 解析錯誤: " + error);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "POST 請求的 JSON 格式錯誤：" + error.message
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var yearMonth = params.yearMonth;
+
+  if (!yearMonth) {
+    Logger.log("yearMonth 未提供");
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "請提供 yearMonth (YYYY-MM)！"
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var summary = {};
+
+  spreadsheet.getSheets().forEach(function(sheet) {
+    var sheetName = sheet.getName();
+    if (sheetName.startsWith(yearMonth) && (sheetName.includes("支出") || sheetName.includes("收入"))) {
+      var date = sheetName.substring(0, 10); // 提取日期 (YYYY-MM-DD)
+      var type = sheetName.includes("支出") ? "支出" : "收入";
+      var data = sheet.getDataRange().getValues();
+      var header = data.shift();
+
+      data.forEach(function(row) {
+        var amount = parseFloat(row[2]);
+        if (!isNaN(amount)) {
+          if (!summary[date]) {
+            summary[date] = { "收入": 0, "支出": 0 };
+          }
+          summary[date][type] += amount;
+        }
+      });
+    }
+  });
+
+  // 建立或更新彙總工作表
+  var summarySheet = spreadsheet.getSheetByName(yearMonth);
+  if (summarySheet) {
+    spreadsheet.deleteSheet(summarySheet);
+  }
+  summarySheet = spreadsheet.insertSheet(yearMonth);
+
+  // 寫入彙總資料到工作表
+  var summaryData = [["日期", "收入", "支出"]];
+  for (var date in summary) {
+    summaryData.push([date, summary[date]["收入"], summary[date]["支出"]]);
+  }
+  summarySheet.getRange(1, 1, summaryData.length, 3).setValues(summaryData);
+
+  // 建立折線圖
+  var chart = summarySheet.newChart()
+    .setChartType(Charts.ChartType.LINE)
+    .addRange(summarySheet.getRange(1, 1, summaryData.length, 3))
+    .setPosition(1, 4, 0, 0)
+    .setOption("title", yearMonth + " 收支折線圖")
+    .setOption("hAxis.title", "日期")
+    .setOption("vAxis.title", "金額")
+    .setOption('curveType', 'function') // 使線條平滑
+    .setOption('pointSize', 5) // 設定點的大小
+    .build();
+
+  summarySheet.insertChart(chart);
+
+  var blob = chart.getAs("image/png");
+  var base64Image = Utilities.base64Encode(blob.getBytes());
+  var dataUri = "data:image/png;base64," + base64Image;
+
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    message: "圖表已成功生成！",
+    imageBase64: dataUri
+  })).setMimeType(ContentService.MimeType.JSON);
+}
