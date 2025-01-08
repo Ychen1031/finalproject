@@ -10,7 +10,7 @@ def get_worksheet(sh, title):
         worksheet.insert_row(['日期', '方式', 'price', '詳情'], 1)
         return worksheet
 
-def push_data(data):
+def pish_data(data):
     gc = gspread.service_account(filename='token.json')
     sh = gc.open_by_url(getdocsgoogle())
     
