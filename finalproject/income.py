@@ -19,7 +19,7 @@ def create_quick_reply_items(action, amount, details):
         QuickReplyItem(
             action=PostbackAction(
                 label=option,
-                data=f'{{"action": "{action}", "方式": "{option.lower()}", "price": {amount}, "詳情": "{details}"}}'
+                data=f'{{"action": "{action}", "方式": "{option.lower()}", "價錢": {amount}, "詳情": "{details}"}}'
             )
         ) for option in options
     ]

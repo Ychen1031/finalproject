@@ -7,10 +7,10 @@ def get_worksheet(sh, title):
         return sh.worksheet(title)
     except gspread.exceptions.WorksheetNotFound:
         worksheet = sh.add_worksheet(title=title, rows="100", cols="20")
-        worksheet.insert_row(['日期', '方式', 'price', '詳情'], 1)
+        worksheet.insert_row(['日期', '方式', '價錢', '詳情'], 1)
         return worksheet
 
-def pish_data(data):
+def push_data(data):
     gc = gspread.service_account(filename='token.json')
     sh = gc.open_by_url(getdocsgoogle())
     

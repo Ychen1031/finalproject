@@ -5,7 +5,7 @@ from linebot.v3.messaging import (
     TextMessage
 )
 import json
-from throw_sheet_income import pish_data
+from throw_sheet_income import push_data
 import datetime
 from config import configuration
 
@@ -39,7 +39,7 @@ def handle_income_postback(event, app):
             data = [
                 [str(datetime.date.today()), income_type, price, details]
             ]
-            pish_data(data)
+            push_data(data)
 
         else:
             app.logger.error(f"KeyError: '方式' not found in postback_data: {postback_data}")
