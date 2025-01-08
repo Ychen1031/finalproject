@@ -1,10 +1,3 @@
-# import os
-# import google.generativeai as generativeai
-
-# generativeai.configure(api_key='AIzaSyD-OynJBPmfxNCHaQaj09Pyr864amOV8zE')
-# response = generativeai.GenerativeModel('gemini-2.0-flash-exp').generate_content('你是誰')
-# print(response.text)  # '你是誰'的回應
-
 import os
 import google.generativeai as generativeai
 from PIL import Image
