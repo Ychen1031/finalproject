@@ -31,21 +31,24 @@ from connection_google_day import get_ngrok_public_url
 from putpicture import putpicture
 from connection_google_month import get_chart
 from askaipicture import ask_ai
+
+from quart import Quart, request, abort
 import json
 import datetime
-import time
+import logging
 
-工作表 = ''
+app = Quart(__name__)
 
-app = Flask(__name__)
+# 設置日誌記錄器
+logging.basicConfig(level=logging.INFO)
+app.logger = logging.getLogger(__name__)
 
-@app.route("/callback", methods=['POST'])
-def callback():
+# get request body as text
+@app.route('/webhook', methods=['POST'])
+async def webhook():
     # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
-
-    # get request body as text
-    body = request.get_data(as_text=True)
+    signature = request.headers.get('X-Line-Signature')
+    body = await request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
     # handle webhook body
@@ -64,13 +67,12 @@ def handle_postback_event(event):
     if event.postback.data:
         try:
             postback_data = json.loads(event.postback.data)
-            print(postback_data)
-            print(type(postback_data))
             print(postback_data)  # 添加此行以打印解析後的 JSON 數據
             if postback_data['action'] == '支出':
                 工作表 = datetime.date.today().strftime("%Y-%m-%d") + 'create支出'
                 expenses(postback_data['action'])
-                handle_expenses_postback(event, app)
+                if '方式' in postback_data:
+                    handle_expenses_postback(event, app)
             elif postback_data['action'] == '收入':
                 工作表 = datetime.date.today().strftime("%Y-%m-%d") + 'create收入'
                 income(postback_data['action'])
@@ -79,12 +81,10 @@ def handle_postback_event(event):
                 print('本日彙總')
                 print(工作表)
                 Options = get_ngrok_public_url(工作表)
-                time.sleep(10)
                 putpicture(Options)
             elif postback_data['action'] == '本月彙總':
                 print('本月彙總')
                 Options = get_chart(datetime.date.today().strftime("%Y-%m"))
-                time.sleep(10)
                 putpicture(Options)
             elif postback_data['action'] == '分析':
                 print('分析')
@@ -121,4 +121,13 @@ from create_rich_menu import create_rich_menu
 create_rich_menu()
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    import hypercorn.asyncio
+    import hypercorn.config
+    import asyncio
+
+    config = hypercorn.config.Config()
+    config.bind = ["127.0.0.1:5000"]
+
+    asyncio.run(hypercorn.asyncio.serve(app, config))
+    
+# hypercorn app:app 10-25 3-4

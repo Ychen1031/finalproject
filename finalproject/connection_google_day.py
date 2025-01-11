@@ -29,4 +29,4 @@ def get_ngrok_public_url(工作表):
         print("HTTP 請求失敗，狀態碼：", response.status_code)
     return '本日彙總'
 
-get_ngrok_public_url('2024-11-26create支出')
+# get_ngrok_public_url('2024-11-26create支出')

@@ -32,6 +32,6 @@ def get_chart(yearMonth):
         print("HTTP 請求失敗，狀態碼：", response.status_code)
         print("回應內容:", response.text)
     return '本月彙總'
-# 測試範例
-current_year_month = datetime.now().strftime("%Y-%m")
-get_chart(current_year_month)
+# # 測試範例
+# current_year_month = datetime.now().strftime("%Y-%m")
+# get_chart(current_year_month)

@@ -39,4 +39,4 @@ def ask_ai():
     except Exception as e:
         print(f"發生錯誤：{e}")
 
-ask_ai()
+# ask_ai()
