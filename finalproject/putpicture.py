@@ -21,7 +21,6 @@ def putpicture(Options):
     print('putpicture')
     @handler.add(MessageEvent, message=TextMessageContent)
     def handle_message(event):
-        print('handle_image_message')
         text = event.message.text
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
@@ -30,7 +29,6 @@ def putpicture(Options):
             url = response['tunnels'][0]['public_url'] + '/static/chart.png'
         elif Options == "本月彙總":
             url = response['tunnels'][0]['public_url'] + '/static/chart_month.png'
-        print(url)
         # 回覆圖片
         line_bot_api.reply_message(
                 ReplyMessageRequest(

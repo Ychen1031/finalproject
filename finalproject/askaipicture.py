@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from config import configuration
 
 load_dotenv()
-print(os.getenv('GEMINIAPIKEY'))
 generativeai.configure(api_key=os.getenv('GEMINIAPIKEY')) # 請替換成您的 API 金鑰
 
 model = generativeai.GenerativeModel('gemini-2.0-flash-exp') # 注意：需要使用支援 vision 的模型
@@ -32,7 +31,6 @@ def ask_ai():
         ]
 
         response = model.generate_content(contents)
-        print(response.text)
         return response.text
     except FileNotFoundError:
         print(f"找不到圖片檔案：{image_path}")

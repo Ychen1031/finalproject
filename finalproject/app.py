@@ -31,6 +31,7 @@ from connection_google_day import get_ngrok_public_url
 from putpicture import putpicture
 from connection_google_month import get_chart
 from askaipicture import ask_ai
+from test import handle_message
 
 from quart import Quart, request, abort
 import json
@@ -76,10 +77,10 @@ def handle_postback_event(event):
             elif postback_data['action'] == '收入':
                 工作表 = datetime.date.today().strftime("%Y-%m-%d") + 'create收入'
                 income(postback_data['action'])
-                handle_income_postback(event, app)
+                if '方式' in postback_data:
+                    handle_income_postback(event, app)
             elif postback_data['action'] == '本日彙總':
                 print('本日彙總')
-                print(工作表)
                 Options = get_ngrok_public_url(工作表)
                 putpicture(Options)
             elif postback_data['action'] == '本月彙總':
@@ -99,15 +100,8 @@ def handle_postback_event(event):
                     )
             elif postback_data['action'] == '回饋':
                 print('回饋')
-                response='請至GitHub，留言給我們，網址:https://github.com/database-playground/app-sf'
-                with ApiClient(configuration) as api_client:
-                    line_bot_api = MessagingApi(api_client)
-                    line_bot_api.reply_message_with_http_info(
-                        ReplyMessageRequest(
-                            reply_token=event.reply_token,
-                            messages=[TextMessage(text=response)]
-                        )
-                    )
+                handle_message(event)
+  
             else:
                 app.logger.error(f"KeyError: 'action' not found in postback_data - {postback_data}")
         except json.JSONDecodeError as e:

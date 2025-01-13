@@ -22,16 +22,15 @@ def expenses(action):
             line_bot_api = MessagingApi(api_client)
             usermassage = event.message.text.split(' ')
             
-            print(type(usermassage[0]))
             if usermassage[0].isdigit():
                 usermassage[0] = int(usermassage[0])
                 line_bot_api.reply_message_with_http_info(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
                         messages=[TextMessage(text='請選擇此消費明細', quick_reply=QuickReply(items=[
-                            QuickReplyItem(action=PostbackAction(label='餐費', data='{"action": "' + action + '", "方式": "meal", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}')),
-                            QuickReplyItem(action=PostbackAction(label='交通費', data='{"action": "' + action + '", "方式": "transportation", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}')),
-                            QuickReplyItem(action=PostbackAction(label='娛樂費', data='{"action": "' + action + '", "方式": "entertainment", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}'))
+                            QuickReplyItem(action=PostbackAction(label='餐費', data='{"action": "' + action + '", "方式": "餐費", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}')),
+                            QuickReplyItem(action=PostbackAction(label='交通費', data='{"action": "' + action + '", "方式": "交通費", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}')),
+                            QuickReplyItem(action=PostbackAction(label='娛樂費', data='{"action": "' + action + '", "方式": "娛樂費", "price": ' + str(usermassage[0]) + ', "詳情": "' + usermassage[1] + '"}'))
                         ]))]
                     )
                 )

@@ -5,7 +5,7 @@ gc = gspread.service_account(filename='token.json')
 
 sh = gc.open_by_url(getdocsgoogle())
 
-def pish_data(data):
+def push_data(data):
     try:
         today = datetime.date.today().strftime("%Y-%m-%d") + 'create支出'
         worksheet = sh.worksheet(today)

@@ -3,18 +3,20 @@ import base64
 import os
 from PIL import Image
 from io import BytesIO
-from dotenv import load_dotenv
-load_dotenv()
+from config import getgoogleday
 
-# Google Apps Script Web Apps URL
-url = os.getenv('GOOGLEDAY')  # 替換為部署後的 URL
+url = getgoogleday()  # 替換為部署後的 URL
+print(getgoogleday())
+
 def get_ngrok_public_url(工作表):
     # 發送 POST 請求
     data = {"sheetName": 工作表}
+    print(data)
     response = requests.post(url, json=data)
 
     if response.status_code == 200:
         result = response.json()
+        print(result)
         if result["status"] == "success":
             if "imageBase64" in result:
                 # 解碼 Base64 圖片
@@ -29,4 +31,4 @@ def get_ngrok_public_url(工作表):
         print("HTTP 請求失敗，狀態碼：", response.status_code)
     return '本日彙總'
 
-# get_ngrok_public_url('2024-11-26create支出')
+# get_ngrok_public_url('2025-01-11create支出')
